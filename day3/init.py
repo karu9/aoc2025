@@ -34,7 +34,6 @@ def part_2(input):
             num_digits -= 1
             final_joltage.append(max_digit)
         sum += int(''.join([str(i) for i in final_joltage]))
-
     return sum
 
 
