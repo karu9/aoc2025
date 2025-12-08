@@ -18,23 +18,13 @@ def part_1(input, number_of_iterations):
 
     sorted_distances = sorted(distances)
 
-    already_visited_pairs = [(i, i) for i in range(len(input))]
-    for _ in range(number_of_iterations):
-        min_distance = 0
-        pair_i = -1
-        pair_j = -1
-        for i in range(len(distances)):
-            for j in range(len(distances[i])):
-                if (i, j) in already_visited_pairs:
-                    continue
-                distance = distances[i][j]
-                if min_distance == 0 or distance < min_distance:
-                    min_distance = distance
-                    pair_i, pair_j = i, j
-        already_visited_pairs.append((pair_i, pair_j))
-        already_visited_pairs.append((pair_j, pair_i))
 
-        print(pair_i, pair_j)
+    for i in range(number_of_iterations):
+        pos_distance = distances.index(sorted_distances[i])
+        pair_i = pos_distance // len(input)
+        pair_j = pos_distance % len(input)
+
+
         i_group = []
         j_group = []
         for group in groups:
