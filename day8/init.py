@@ -53,12 +53,61 @@ def part_1(input, number_of_iterations):
     return sorted_lengths[-1] * sorted_lengths[-2] * sorted_lengths[-3]
 
 
-
-
-
-
 def part_2(input):
-    pass
+    groups = []
+    distances = []
+    final_i = 0
+    final_j = 0
+    for i in range(len(input)):
+        to_plug = input[i]
+        for j in range(len(input)):
+            to_compare = input[j]
+            distance = (to_plug[0] - to_compare[0])**2 + (to_plug[1] - to_compare[1])**2 + (to_plug[2] - to_compare[2])**2
+            distances.append(distance)
+    max_distance = max(distances)
+    for i in range(len(input)):
+        for j in range(i, len(input)):
+            distances[i * len(input) + j] = max_distance + 1
+
+    sorted_distances = sorted(distances)
+
+    cur_distance = -1
+    while True:
+        cur_distance += 1
+        pos_distance = distances.index(sorted_distances[cur_distance])
+        pair_i = pos_distance // len(input)
+        pair_j = pos_distance % len(input)
+
+        i_group = []
+        j_group = []
+        for group in groups:
+            if pair_i in group:
+                i_group = group
+                break
+        for group in groups:
+            if pair_j in group:
+                j_group = group
+                break
+
+        if len(i_group) == len(j_group) == 0:
+            groups.append([pair_i, pair_j])
+            continue
+        if i_group == j_group:
+            continue
+
+        if len(j_group) > 0 and len(i_group) > 0:
+            new_group = list(set(j_group + i_group))
+            groups = list(filter(lambda g: g != j_group and g != i_group, groups)) + [new_group]
+        elif len(j_group) > 0:
+            j_group.append(pair_i)
+        elif len(i_group) > 0:
+            i_group.append(pair_j)
+        if len(groups) == 1 and len(groups[0]) == len(input):
+            final_i = pair_i
+            final_j = pair_j
+            break
+
+    return input[final_i][0] * input[final_j][0]
 
 
 def process_input(input):
@@ -73,7 +122,7 @@ if __name__ == '__main__':
     print("example part_1")
     print(part_1(process_input(example), 10))
     print("input part_1")
-    print(part_1(process_input(input), 1000))
+    # print(part_1(process_input(input), 1000))
 
     print("example part_2")
     print(part_2(process_input(example)))
