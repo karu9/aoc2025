@@ -60,15 +60,20 @@ def lines_intersect(rectangle_edge, input_edge, rectangle_edge_direction, side):
         return False
 
 
-def filter_edges(edgs, min_x, max_x, min_y, max_y):
-    filtered_edges = []
+def has_edges_with_points_inside(edgs, min_x, max_x, min_y, max_y):
+
     for edge in edgs:
         edge_xs = [edge[0][0], edge[1][0]]
         edge_ys = [edge[0][1], edge[1][1]]
-        if max(edge_xs) < min_x or min(edge_xs) > max_x or max(edge_ys) < min_y or min(edge_ys) > max_y:
+        min_edge_x = min(edge_xs)
+        max_edge_x = max(edge_xs)
+        min_edge_y = min(edge_ys)
+        max_edge_y = max(edge_ys)
+        if max_edge_y <= min_y or min_edge_y >= max_y or max_edge_x <= min_x or min_edge_x >= max_x:
             continue
-        filtered_edges.append(edge)
-    return filtered_edges
+        return True
+
+    return False
 
 def rectangle_inside(i_point, j_point, edgs):
     min_x = min(i_point[0], j_point[0])
@@ -77,22 +82,8 @@ def rectangle_inside(i_point, j_point, edgs):
     max_y = max(i_point[1], j_point[1])
     if min_y == max_y or min_x == max_x:
         return False
-    filtered_edges = filter_edges(edgs, min_x, max_x, min_y, max_y)
-    boundaries = [[min_x, min_y], [min_x, max_y], [max_x, max_y], [max_x, min_y]]
-    sides = ['left', 'bottom', 'right', 'top']
-    for i in range(len(boundaries)):
-        rectangle_edge = (boundaries[i], boundaries[(i+1) % len(boundaries)])
-        side = sides[i]
-        rectangle_edge_direction = (rectangle_edge[1][0] - rectangle_edge[0][0], rectangle_edge[1][1] - rectangle_edge[0][1])
-        for input_edge in filtered_edges:
-            input_edge_direction = (input_edge[1][0] - input_edge[0][0], input_edge[1][1] - input_edge[0][1])
-            cross_product = rectangle_edge_direction[0] * input_edge_direction[1] - rectangle_edge_direction[1] * input_edge_direction[0]
-            if cross_product == 0:
-                # don't check for parallel lines
-                continue
-            if lines_intersect(rectangle_edge, input_edge, rectangle_edge_direction, side):
-                return False
-    return True
+    return not has_edges_with_points_inside(edgs, min_x, max_x, min_y, max_y)
+
 
 def part_2(input):
     maxes = []
