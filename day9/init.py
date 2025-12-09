@@ -21,45 +21,6 @@ def edges(points):
         edges.append((i_point, j_point))
     return edges
 
-def lines_intersect(rectangle_edge, input_edge, rectangle_edge_direction, side):
-    if rectangle_edge_direction[0] == 0:
-        x = rectangle_edge[0][0]
-        ys = [rectangle_edge[0][1], rectangle_edge[1][1]]
-        min_y = min(ys)
-        max_y = max(ys)
-        input_y = input_edge[0][1]
-        input_xs = [input_edge[0][0], input_edge[1][0]]
-        min_input_x = min(input_xs)
-        max_input_x = max(input_xs)
-        if min_input_x > x or max_input_x < x:
-            return False
-        if min_y > input_y or max_y < input_y:
-            return False
-        if (x == min_input_x or x == max_input_x) and (input_y == min_y or input_y == max_y):
-            return False
-        if side == 'left' and x < max_input_x or side == 'right' and x > min_input_x:
-            return True
-        return False
-    else:
-        y = rectangle_edge[0][1]
-        xs = [rectangle_edge[0][0], rectangle_edge[1][0]]
-        min_x = min(xs)
-        max_x = max(xs)
-        input_x = input_edge[0][0]
-        input_ys = [input_edge[0][1], input_edge[1][1]]
-        min_input_y = min(input_ys)
-        max_input_y = max(input_ys)
-        if min_input_y > y or max_input_y < y:
-            return False
-        if min_x > input_x or max_x < input_x:
-            return False
-        if (y == min_input_y or y == max_input_y) and (input_x == min_x or input_x == max_x):
-            return False
-        if side == 'top' and y < max_input_y or side == 'bottom' and y > min_input_y:
-            return True
-        return False
-
-
 def has_edges_with_points_inside(edgs, min_x, max_x, min_y, max_y):
 
     for edge in edgs:
