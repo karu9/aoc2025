@@ -1,17 +1,18 @@
+import itertools
 import os
 from common.file_utils import example_as_lines, input_as_lines
 
 
-def part_1(input):
-    devices = ['you']
-    already_visited = ['you']
+def from_to(input, start, end):
+    devices = [start]
+    already_visited = [start]
     count = 0
     while len(devices) > 0:
         new_devices = []
         for device in devices:
             next_devices = input[device]
             for next_device in next_devices:
-                if next_device == 'out':
+                if next_device == end:
                     count += 1
                     continue
                 if next_device in already_visited:
@@ -21,9 +22,59 @@ def part_1(input):
         devices = new_devices
     return count
 
+def part_1(input):
+    return from_to(input, 'you', 'out')
+
 
 def part_2(input):
-    pass
+    devices = {
+        'nothing': ['svr'],
+        'fft': [],
+        'dac': [],
+        'both': []
+    }
+    already_visited = ['svr']
+
+    count = 0
+    while len(list(itertools.chain.from_iterable(devices.values()))) > 0:
+        new_devices = {
+            'nothing': [],
+            'fft': [],
+            'dac': [],
+            'both': []
+        }
+        for key in devices.keys():
+            for device in devices[key]:
+                next_devices = input[device]
+                for next_device in next_devices:
+                    if next_device == 'out':
+                        if key == 'both':
+                            count += 1
+                        continue
+                    if next_device in already_visited:
+                        continue
+                    already_visited.append(next_devices)
+                    if key == 'nothing':
+                        if next_device == 'fft':
+                            new_devices['fft'].append(next_device)
+                        elif next_device == 'dac':
+                            new_devices['dac'].append(next_device)
+                        else:
+                            new_devices['nothing'].append(next_device)
+                    elif key == 'fft':
+                        if next_device == 'dac':
+                            new_devices['both'].append(next_device)
+                        else:
+                            new_devices['fft'].append(next_device)
+                    elif key == 'dac':
+                        if next_device == 'fft':
+                            new_devices['both'].append(next_device)
+                        else:
+                            new_devices['dac'].append(next_device)
+                    elif key == 'both':
+                        new_devices['both'].append(next_device)
+        devices = new_devices
+    return count
 
 
 def process_input(input):
