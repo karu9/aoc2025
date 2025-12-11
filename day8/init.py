@@ -122,7 +122,7 @@ if __name__ == '__main__':
     print("example part_1")
     print(part_1(process_input(example), 10))
     print("input part_1")
-    # print(part_1(process_input(input), 1000))
+    print(part_1(process_input(input), 1000))
 
     print("example part_2")
     print(part_2(process_input(example)))
