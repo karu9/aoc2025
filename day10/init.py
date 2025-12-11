@@ -46,28 +46,34 @@ def part_2(input):
         sum_of_joltages = sum(joltages)
         current_record = [sum_of_joltages]
 
-        def push_buttons(expected_state, button_mask, count, previous_state):
+        def push_buttons(expected_state, button_masks, count, previous_state, blacklist):
             if count >= current_record[0]:
                 return
-            if sum(previous_state) >= sum_of_joltages:
-                if previous_state == expected_state:
-                    current_record[0] = count + 1
-                return
 
-            for i in range(len(button_mask)):
-                current_button = button_mask[i]
+            next_states = []
+            next_blacklist = blacklist.copy()
+            for i in range(len(button_masks)):
+                if i in blacklist:
+                    continue
+                current_button = button_masks[i]
                 next_state = [a + b for a, b in zip(previous_state, current_button)]
 
-                if sum(next_state) >= sum_of_joltages:
-                    if next_state == expected_state:
-                        current_record[0] = count + 1
+                if next_state == expected_state:
+                    current_record[0] = count + 1
                     return
 
-                push_buttons(expected_state, button_mask, count + 1, next_state)
+                if any([next_state[j] > expected_state[j] for j in range(len(next_state))]):
+                    next_blacklist.append(i)
+                    continue
+                else:
+                    next_states.append(next_state)
+
+            for next_state in next_states:
+                push_buttons(expected_state, button_masks, count + 1, next_state, next_blacklist)
 
         buttons = line[1]
         button_masks = [[1 if i in button else 0 for i in range(len(joltages))] for button in buttons]
-        push_buttons(joltages, button_masks, 0, [0 for _ in range(len(joltages))])
+        push_buttons(joltages, button_masks, 0, [0 for _ in range(len(joltages))],[])
         number_of_tries.append(current_record[0])
     return sum(number_of_tries)
 
